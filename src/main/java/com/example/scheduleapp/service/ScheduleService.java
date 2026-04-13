@@ -2,10 +2,14 @@ package com.example.scheduleapp.service;
 
 import com.example.scheduleapp.dto.CreateScheduleRequest;
 import com.example.scheduleapp.dto.CreateScheduleResponse;
+import com.example.scheduleapp.dto.GetScheduleResponse;
 import com.example.scheduleapp.entity.Schedule;
 import com.example.scheduleapp.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ScheduleService {
@@ -33,6 +37,29 @@ public class ScheduleService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public List<GetScheduleResponse> findAll(String userName) {
+        List<Schedule> schedules;
+        if (userName == null) {
+            schedules = scheduleRepository.findAll();
+        } else {
+            schedules = scheduleRepository.findByUserName(userName);
+        }
+
+        List<GetScheduleResponse> result = new ArrayList<>();
+
+        for (Schedule schedule : schedules) {
+            result.add(new GetScheduleResponse(
+                    schedule.getId(),
+                    schedule.getTitle(),
+                    schedule.getContents(),
+                    schedule.getUserName(),
+                    schedule.getCreatedAt(),
+                    schedule.getModifiedAt()
+            ));
+        } return result;
+    }
+
     // 기
     public void createSchedule(CreateScheduleRequest request) {
         String title = request.getTitle();
@@ -42,4 +69,6 @@ public class ScheduleService {
 
         new Schedule(title, contents, userName, password);
     }
+
+
 }

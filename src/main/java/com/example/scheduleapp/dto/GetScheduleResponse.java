@@ -2,7 +2,7 @@ package com.example.scheduleapp.dto;
 
 import java.time.LocalDateTime;
 
-public class CreateScheduleResponse {
+public class GetScheduleResponse {
     // 속성
     private final Long id;
     private final String title;
@@ -12,7 +12,7 @@ public class CreateScheduleResponse {
     private final LocalDateTime modifiedAt;
 
     // 생성자
-    public CreateScheduleResponse(Long id, String title, String contents, String userName, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public GetScheduleResponse(Long id, String title, String contents, String userName, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
         this.title = title;
         this.contents = contents;
