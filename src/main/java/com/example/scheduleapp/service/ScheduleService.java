@@ -60,6 +60,22 @@ public class ScheduleService {
         } return result;
     }
 
+    @Transactional(readOnly = true)
+    public GetScheduleResponse findOne(Long scheduleId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalStateException("해당 일정을 찾을 수 없습니다.")
+        );
+        return new GetScheduleResponse(
+                schedule.getId(),
+                schedule.getTitle(),
+                schedule.getContents(),
+                schedule.getUserName(),
+                schedule.getCreatedAt(),
+                schedule.getModifiedAt()
+        );
+    }
+
+
     // 기
     public void createSchedule(CreateScheduleRequest request) {
         String title = request.getTitle();
@@ -69,6 +85,4 @@ public class ScheduleService {
 
         new Schedule(title, contents, userName, password);
     }
-
-
 }

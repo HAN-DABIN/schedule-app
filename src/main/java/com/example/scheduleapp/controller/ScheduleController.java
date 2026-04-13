@@ -22,18 +22,24 @@ public class ScheduleController {
     }
 
     // 기
-    // 스캐쥴 생성 API 기능
+    // 일정 생성
     @PostMapping("/schedules") // 요청 매핑
     public ResponseEntity<CreateScheduleResponse> CreateSchedule (
             @RequestBody CreateScheduleRequest request) { // DTO를 requestbody로 받아서 service로 전달
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(request)); // 저장 후 성공 결과 반환
     }
 
-    // 스케쥴 전체 조회 API 기능
+    // 일정 전체 조회
     @GetMapping("/schedules")
-    public ResponseEntity<List<GetScheduleResponse>> getUserSchedule (
+    public ResponseEntity<List<GetScheduleResponse>> getAllSchedule (
             @RequestParam(required = false) String userName) { // userName 있으면 사용자일정 조회 없으면 전체 일정 조회
         return ResponseEntity.status(HttpStatus.OK).body(service.findAll(userName));
     }
 
+    // 일정 단 건 조회
+    @GetMapping("schedules/{scheduleId}")
+    public ResponseEntity<GetScheduleResponse> getOneSchedule (
+            @PathVariable Long scheduleId) { // service에 id넘기기
+        return ResponseEntity.status(HttpStatus.OK).body(service.findOne(scheduleId));
+    }
 }
