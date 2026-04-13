@@ -69,9 +69,11 @@ public class ScheduleService {
     // 단 건 조회
     @Transactional(readOnly = true)
     public GetScheduleResponse findOne(Long scheduleId) {
+        // Id 조회하고 없으면 예외처리
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalStateException("해당 일정을 찾을 수 없습니다.")
         );
+        // 조회 결과 반환
         return new GetScheduleResponse(
                 schedule.getId(),
                 schedule.getTitle(),
@@ -84,7 +86,7 @@ public class ScheduleService {
 
     // 수정
     @Transactional
-    public UpdateScheduleResponse updateTitle(Long scheduleId, UpdateTitleScheduleRequest request) {
+    public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
         // 수정 일정 조회
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalStateException("수정할 일정이 없습니다.")
@@ -93,8 +95,9 @@ public class ScheduleService {
         if (!schedule.getPassword().equals(request.getPassword())) {
             throw new IllegalStateException("비밀번호가 올바르지 않습니다.");
         }
+
         // 제목 수정
-        schedule.updateScheduleTitle(request.getTitle());
+        schedule.updateSchedule(request.getTitle(), request.getUserName());
         // 수정 결과 반환
         return new UpdateScheduleResponse(
                 schedule.getId(),

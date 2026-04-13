@@ -1,9 +1,10 @@
 package com.example.scheduleapp.dto;
 
-public class UpdateTitleScheduleRequest {
+public class UpdateScheduleRequest {
 
     // 속성
     private String title;
+    private String userName;
     private String password;
 
     // 생성자
@@ -12,7 +13,9 @@ public class UpdateTitleScheduleRequest {
     public String getTitle() {
         return title;
     }
-
+    public String getUserName() {
+        return userName;
+    }
     public String getPassword() {
         return password;
     }
