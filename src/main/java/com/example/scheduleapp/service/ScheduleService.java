@@ -1,8 +1,6 @@
 package com.example.scheduleapp.service;
 
-import com.example.scheduleapp.dto.CreateScheduleRequest;
-import com.example.scheduleapp.dto.CreateScheduleResponse;
-import com.example.scheduleapp.dto.GetScheduleResponse;
+import com.example.scheduleapp.dto.*;
 import com.example.scheduleapp.entity.Schedule;
 import com.example.scheduleapp.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
@@ -23,10 +21,13 @@ public class ScheduleService {
         this.scheduleRepository = scheduleRepository;
     }
 
+    // 저장
     @Transactional
     public CreateScheduleResponse save(CreateScheduleRequest request) {
+        // Request DTO를 Entity로 변환
         Schedule schedule = new Schedule(request.getTitle(), request.getContents(), request.getUserName(), request.getPassword());
-        Schedule savedSchedule =  scheduleRepository.save(schedule);
+        Schedule savedSchedule =  scheduleRepository.save(schedule); // DB저장
+        // Entity를 Response DTO로 변환 후 반환
         return new CreateScheduleResponse(
                 savedSchedule.getId(),
                 savedSchedule.getTitle(),
@@ -37,29 +38,35 @@ public class ScheduleService {
         );
     }
 
-    @Transactional(readOnly = true)
+    // 전체 조회
+    @Transactional(readOnly = true) // 조회만
     public List<GetScheduleResponse> findAll(String userName) {
         List<Schedule> schedules;
+        // userName이 없으면 전체 조회 있으면 userName 일정만 조회
         if (userName == null) {
             schedules = scheduleRepository.findAll();
         } else {
             schedules = scheduleRepository.findByUserName(userName);
         }
 
-        List<GetScheduleResponse> result = new ArrayList<>();
+        // Entity를 Response DTO로 변환
+        List<GetScheduleResponse> dtos = new ArrayList<>();
 
         for (Schedule schedule : schedules) {
-            result.add(new GetScheduleResponse(
+            GetScheduleResponse dto = new GetScheduleResponse(
                     schedule.getId(),
                     schedule.getTitle(),
                     schedule.getContents(),
                     schedule.getUserName(),
                     schedule.getCreatedAt(),
                     schedule.getModifiedAt()
-            ));
-        } return result;
+            );
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
+    // 단 건 조회
     @Transactional(readOnly = true)
     public GetScheduleResponse findOne(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
@@ -75,14 +82,27 @@ public class ScheduleService {
         );
     }
 
-
-    // 기
-    public void createSchedule(CreateScheduleRequest request) {
-        String title = request.getTitle();
-        String contents = request.getContents();
-        String userName = request.getUserName();
-        String password = request.getPassword();
-
-        new Schedule(title, contents, userName, password);
+    // 수정
+    @Transactional
+    public UpdateScheduleResponse updateTitle(Long scheduleId, UpdateTitleScheduleRequest request) {
+        // 수정 일정 조회
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalStateException("수정할 일정이 없습니다.")
+        );
+        // 비밀번호 검증
+        if (!schedule.getPassword().equals(request.getPassword())) {
+            throw new IllegalStateException("비밀번호가 올바르지 않습니다.");
+        }
+        // 제목 수정
+        schedule.updateScheduleTitle(request.getTitle());
+        // 수정 결과 반환
+        return new UpdateScheduleResponse(
+                schedule.getId(),
+                schedule.getTitle(),
+                schedule.getContents(),
+                schedule.getUserName(),
+                schedule.getCreatedAt(),
+                schedule.getModifiedAt()
+        );
     }
 }

@@ -28,9 +28,8 @@ public class Schedule extends BaseEntity {
         this.password = password;
     }
 
-    public void updateSchedule(String title, String userName) {
+    public void updateScheduleTitle(String title) {
         this.title = title;
-        this.userName = userName;
     }
 
     // 기
@@ -48,5 +47,9 @@ public class Schedule extends BaseEntity {
 
     public String getUserName() {
         return userName;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }
