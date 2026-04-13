@@ -108,4 +108,18 @@ public class ScheduleService {
                 schedule.getModifiedAt()
         );
     }
+
+    @Transactional
+    public void delete(Long scheduleId, String password) {
+        // 삭제 일정 조회 (없으면 예외 발생)
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalStateException("삭제할 일정이 없습니다.")
+        );
+        // id에 저장된 password 비교 (다르면 예외 발생)
+        if (!schedule.getPassword().equals(password)) {
+            throw new IllegalStateException("비밀번호가 올바르지 않습니다.");
+        }
+        // password가 올바를 시 삭제
+        scheduleRepository.deleteById(scheduleId);
+    }
 }

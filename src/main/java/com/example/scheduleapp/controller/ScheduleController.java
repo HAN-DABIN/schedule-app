@@ -41,12 +41,21 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.OK).body(service.findOne(scheduleId));
     }
 
-    // 일정 수정 - 제목
+    // 일정 수정
     @PutMapping("/schedules/{scheduleId}")
     public ResponseEntity<UpdateScheduleResponse> updateSchedule(
             @PathVariable Long scheduleId,
             @RequestBody UpdateScheduleRequest request
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(service.update(scheduleId, request));
+    }
+
+    // 일정 삭제
+    @DeleteMapping("/schedules/{scheduleId}")
+    public ResponseEntity<Void> deleteSchedule(
+            @PathVariable Long scheduleId,
+            @RequestHeader String password) { // header로 password 전달 받음
+        service.delete(scheduleId, password);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
